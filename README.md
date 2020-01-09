@@ -2,6 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/tisnik/go-capture)](https://goreportcard.com/report/github.com/tisnik/go-capture)
 [![Build Status](https://travis-ci.org/tisnik/go-capture.svg?branch=master)](https://travis-ci.org/tisnik/go-capture)
+[![codecov](https://codecov.io/gh/tisnik/go-capture/branch/master/graph/badge.svg)](https://codecov.io/gh/tisnik/go-capture)
 
 ## Description
 
