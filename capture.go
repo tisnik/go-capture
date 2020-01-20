@@ -29,14 +29,20 @@ func StandardOutput(function func()) (string, error) {
 
 	// channel with captured standard output
 	captured := make(chan string)
+
+	// synchronization object
 	wg := new(sync.WaitGroup)
+	// we are going to wait for one goroutine only
 	wg.Add(1)
+
 	go func() {
 		var buf bytes.Buffer
+		// goroutine is started -> inform main one via WaitGroup object
 		wg.Done()
 		io.Copy(&buf, reader)
 		captured <- buf.String()
 	}()
+	// wait for goroutine to start
 	wg.Wait()
 	// provided function that (probably) prints something to standard output
 	function()
@@ -66,14 +72,19 @@ func ErrorOutput(function func()) (string, error) {
 
 	// channel with captured error output
 	captured := make(chan string)
+
+	// synchronization object
 	wg := new(sync.WaitGroup)
+	// we are going to wait for one goroutine only
 	wg.Add(1)
 	go func() {
 		var buf bytes.Buffer
+		// goroutine is started -> inform main one via WaitGroup object
 		wg.Done()
 		io.Copy(&buf, reader)
 		captured <- buf.String()
 	}()
+	// wait for goroutine to start
 	wg.Wait()
 	// provided function that (probably) prints something to error output
 	function()
