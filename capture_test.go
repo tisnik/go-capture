@@ -86,3 +86,17 @@ func TestOutputToStdErr(t *testing.T) {
 		t.Fatal("Incorrect output has been captured:", captured)
 	}
 }
+
+// TestOutputToStdOutAndStdErr checks whether output to stderr is captured or not
+func TestOutputToStdOutAndStdErr(t *testing.T) {
+	captured, err := capture.StandardOutput(func() {
+		fmt.Fprint(os.Stdout, "Hello to stdout!")
+		fmt.Fprint(os.Stderr, "Hello to stderr!")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture standard output", err)
+	}
+	if captured != "Hello to stdout!" {
+		t.Fatal("Incorrect output has been captured:", captured)
+	}
+}
