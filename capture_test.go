@@ -100,3 +100,81 @@ func TestOutputToStdOutAndStdErr(t *testing.T) {
 		t.Fatal("Incorrect output has been captured:", captured)
 	}
 }
+
+// TestNoOutput checks if empty error output is captured properly
+func TestNoErrorOutput(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+	})
+	if err != nil {
+		t.Fatal("Unable to capture error output", err)
+	}
+	if captured != "" {
+		t.Fatal("Error should be empty")
+	}
+}
+
+// TestEmptyErrorOutput checks if empty error output is captured properly
+func TestEmptyErrorOutput(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+		fmt.Print("")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture error output", err)
+	}
+	if captured != "" {
+		t.Fatal("Error should be empty")
+	}
+}
+
+// TestErrorOutputWithoutNewlines checks if error output created by fmt.Fprint is captured properly
+func TestErrorOutputWithoutNewlines(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+		fmt.Fprint(os.Stderr, "Hello!")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture error output", err)
+	}
+	if captured != "Hello!" {
+		t.Fatal("Incorrect error output has been captured:", captured)
+	}
+}
+
+// TestErrorOutputWithNewlines checks if error output created by fmt.Fprintln is captured properly
+func TestErrorOutputWithNewlines(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+		fmt.Fprintln(os.Stderr, "Hello!")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture error output", err)
+	}
+	if captured != "Hello!\n" {
+		t.Fatal("Incorrect error output has been captured:", captured)
+	}
+}
+
+// TestOutputToStdout checks whether output to stdout is captured or not
+func TestOutputToStdou(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+		fmt.Fprint(os.Stdout, "Hello!")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture standard output", err)
+	}
+	if captured != "" {
+		t.Fatal("Incorrect error output has been captured:", captured)
+	}
+}
+
+// TestOutputToStdOutAndStdErr2 checks whether output to stderr is captured or not
+func TestOutputToStdOutAndStdErr2(t *testing.T) {
+	captured, err := capture.ErrorOutput(func() {
+		fmt.Fprint(os.Stdout, "Hello to stdout!")
+		fmt.Fprint(os.Stderr, "Hello to stderr!")
+	})
+	if err != nil {
+		t.Fatal("Unable to capture standard output", err)
+	}
+	if captured != "Hello to stderr!" {
+		t.Fatal("Incorrect output has been captured:", captured)
+	}
+}
