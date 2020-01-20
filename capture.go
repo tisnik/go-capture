@@ -43,3 +43,40 @@ func StandardOutput(function func()) (string, error) {
 	writer.Close()
 	return <-captured, nil
 }
+
+// ErrorOutput captures the error output for specified code
+// block and then returns the captured output.
+// Please see https://medium.com/@hau12a1/golang-capturing-log-println-and-fmt-println-output-770209c791b4
+// for further explanation how it works under the hood.
+func ErrorOutput(function func()) (string, error) {
+	// backup of the real stderr
+	stderr := os.Stderr
+
+	// temporary replacement for stderr
+	reader, writer, err := os.Pipe()
+	if err != nil {
+		return "", err
+	}
+
+	// temporarily replace real Stderr by the mocked one
+	defer func() {
+		os.Stderr = stderr
+	}()
+	os.Stderr = writer
+
+	// channel with captured error output
+	captured := make(chan string)
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		var buf bytes.Buffer
+		wg.Done()
+		io.Copy(&buf, reader)
+		captured <- buf.String()
+	}()
+	wg.Wait()
+	// provided function that (probably) prints something to error output
+	function()
+	writer.Close()
+	return <-captured, nil
+}
